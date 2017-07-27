@@ -3,7 +3,7 @@
 ROOT_PROJECT=$(dirname $(readlink -f ${BASH_SOURCE[0]}))
 BUILD_PATH=${TARGET:-$PWD}/build
 ROOTFS_PATH=${TARGET:-$PWD}/rootfs
-FORMAT=tar
+FORMAT=tgz
 
 trap ctrl_c INT
 
@@ -47,7 +47,7 @@ EOF
               mv -v $f $ROOTFS_PATH/$(basename $f .$FORMAT)_$date.$FORMAT
             done
         else
-            echo "\n$name FAILED\n"
+            echo -e "\n$name FAILED\n"
         fi
     fi
 done

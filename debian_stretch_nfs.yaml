@@ -6,7 +6,7 @@
 #
 #==============================================================================
 ---
-extend: grid5000/virtualbox/stretch-x64-nfs.yaml # Cf 'stretch-x64-common' for a real content. This recipe only overwrite variant.
+extend: grid5000/virtualbox/stretch-x64-common.yaml # Cf 'stretch-x64-common' for a real content. This recipe only overwrite variant.
 
 global:
   # To see the variables that you can override, use the following command:
