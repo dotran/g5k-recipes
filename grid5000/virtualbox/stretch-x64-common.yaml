@@ -2,54 +2,41 @@
 # vim: softtabstop=2 shiftwidth=2 expandtab fenc=utf-8 cc=81 tw=80
 #==============================================================================
 #
-# DESCRIPTION: Debian 8 (Jessie) base system built with virtualbox.
+# DESCRIPTION: Debian 9 (Stretch) base system built with virtualbox.
 #
 #==============================================================================
 ---
-extend: debian8.yaml
+extend: jessie-x64-common.yaml
 # Enables qcow2 checkpoint
 checkpoint: virtualbox.yaml
 #== Global variables use by Kameleon engine and the steps
 global:
-  image_size: 15G
-  include: virtualbox_options.yaml
-  appliance_formats: qcow2 tar.gz
-  appliance_tar_excludes: >-
-    ./etc/fstab ./root/.bash_history ./root/kameleon_workdir
-    ./var/tmp/* ./tmp/* ./dev/* ./var/log/* ./proc/* ./run/*
-    ./sys/*
-#  input: $${virtualbox_image_disk}
-  bootstrap_packages: >
-    linux-image-$${kernel_arch}
-    isc-dhcp-client isc-dhcp-common ifupdown iptables iproute2 iputils-ping
-    openssh-server
-    - prepare appliance
-    - start_virtualbox
-  setup_packages: >
-    extlinux
-  # G5k variables
-  variant: min # default value for variant. Can be overwritten by --global=variant:<my_variant> when calling kameleon
-  os_family: debian
-  os_release: jessie
-  image_version: 2017072516
+  release: stretch
+  release_number: -stretch
+  bootstrap_image_version: "20170522-1"
+  os_release: stretch
+  image_version: 2017072611
+  variant: min
   output: "$${kameleon_cwd}/$${kameleon_recipe_name}" # output files basename
   g5k_tgz_path: server:///path/to/your/image
   g5k_postinst_path: server:///grid5000/postinstalls/debian-x64-min-1.2-post.tgz
-  g5k_kernel_params: ""
-  kernel_args: "net.ifnames=0 biosdevname=0 console=ttyS0"
-  arg_create: --basefolder /tmp
+  g5k_kernel_params: "net.ifnames=0 biosdevname=0 modprobe.blacklist=myri10ge" # Predictable interface name not supported yet
+  force_puppet_debian_version: jessie #Because puppet strech is not released yet
 
 bootstrap:
-  - "@base"
+  - prepare_appliance
+  - rename_etc_interfaces #Predictable interfaces name not supported yet
+  - start_virtualbox
 
 setup:
-   # Install
+  - remove_empty_udev #Dirty hack due to Bug #25
   - configure_apt:
     - repository: $${apt_repository}
     - enable_contrib_repo: $${apt_enable_contrib}
     - enable_nonfree_repo: $${apt_enable_nonfree}
   - upgrade_system:
     - dist_upgrade: true
+  - update_apt_keys
   - install_software:
     - packages: $${setup_packages}
   - install_bootloader
@@ -59,6 +46,4 @@ setup:
   - run_orchestrator
 
 export:
-  - disable_checkpoint
   - "@base"
-  - export_g5k

@@ -2,30 +2,24 @@
 # vim: softtabstop=2 shiftwidth=2 expandtab fenc=utf-8 cc=81 tw=80
 #==============================================================================
 #
-# DESCRIPTION: <MY RECIPE DESCRIPTION>
+# DESCRIPTION: Debian 9 (Stretch) nfs built with qemu.
 #
 #==============================================================================
 ---
-extend: grid5000/virtualbox/jessie-x64-nfs.yaml
+extend: grid5000/virtualbox/stretch-x64-nfs.yaml # Cf 'stretch-x64-common' for a real content. This recipe only overwrite variant.
 
 global:
-  # This is the backend you have imported to switch to an other backend BCKD do:
-  #
-  #   kameleon template import grid5000/virtualbox/jessie-x64-nfs.yaml --global backend:BCKB
-  #
-  # Then, uncomment and update the following variable.
-
-  # backend: qemu
-
   # To see the variables that you can override, use the following command:
-  #
   #   kameleon info debian_stretch_nfs.yaml
+  variant: nfs
+  g5k_postinst_path: server:///grid5000/postinstalls/debian-x64-nfs-2.6-post.tgz
 
 bootstrap:
   - "@base"
 
 setup:
   - "@base"
+  # - clean_unnecessary_packages
 
 export:
   - "@base"
