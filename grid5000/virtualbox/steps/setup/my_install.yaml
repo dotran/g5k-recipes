@@ -107,7 +107,7 @@
       cp $${my_files_path}/.bash_aliases      ~root/
       cp $${my_files_path}/.gitconfig         ~root/
       cp $${my_files_path}/.vimrc             ~root/
-      echo -e "\n====================\n"  >>  ~root/.bashrc
+      echo -e "\n--------------------\n"  >>  ~root/.bashrc
       cat $${my_files_path}/.bashrc       >>  ~root/.bashrc
 
 
