@@ -91,7 +91,7 @@
       chsh -s /bin/bash mpi
       # Copy the ~root/authorized_keys so that we can login as "mpi" from the frontend
       mkdir ~mpi/.ssh
-      cp ~root/.ssh/authorized_keys ~mpi/.ssh
+      #cp ~root/.ssh/authorized_keys ~mpi/.ssh
       chown -R mpi ~mpi/.ssh
       su - mpi
       # Create an SSH key with empty passphrase
