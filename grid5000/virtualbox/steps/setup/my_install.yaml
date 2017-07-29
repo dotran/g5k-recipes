@@ -1,12 +1,12 @@
 # Install my custom set of utilities
 
-- update_repos_and_upgrades:
+- update_repositories_and_upgrade:
   - exec_in: |
       apt-get -y update
-      apt-get -y upgrade
-      apt-get -y autoclean
-      apt-get -y clean
-      apt-get -y autoremove
+      # apt-get -y upgrade
+      # apt-get -y autoclean
+      # apt-get -y clean
+      # apt-get -y autoremove
 
 - install_additions:
   - exec_in: |
@@ -39,6 +39,8 @@
   - exec_in: |
       echo -e "\n\n\n# Backport of R\n" >> /etc/apt/sources.list
       echo "deb https://cloud.r-project.org/bin/linux/$${distrib} $${release}-cran34/" >> /etc/apt/sources.list
+      apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF'
+      apt-get -y update
 
 - install_r:
   - exec_in: |
