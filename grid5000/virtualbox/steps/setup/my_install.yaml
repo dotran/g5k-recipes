@@ -71,7 +71,7 @@
 - add_r_backport_to_source_list:
   - exec_in: |
       echo -e "\n\n# Backport of R" >> /etc/apt/sources.list
-      echo "$${r_backport_source}" >> /etc/apt/sources.list
+      echo $${r_backport_source} >> /etc/apt/sources.list
       apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF'
       apt-get -y update
 
@@ -80,26 +80,26 @@
       apt-get install -y r-base r-base-dev
 
 
-- create_and_configure_the_user_mpi:
-  - exec_in: |
-      # create a dedicated user "mpi" and add it to the "rdma" group to allow access to Infiniband hardware
-      useradd -m -g users mpi -d /var/mpi
-      #usermod -aG rdma mpi
-      # Add user "mpi" to group sudo if you want
-      usermod -aG sudo mpi
-      # Change the shell for the user "mpi" to bash (in case it is sh)
-      chsh -s /bin/bash mpi
-      # Copy the ~root/authorized_keys so that we can login as "mpi" from the frontend
-      mkdir ~mpi/.ssh
-      #cp ~root/.ssh/authorized_keys ~mpi/.ssh
-      chown -R mpi ~mpi/.ssh
-      su - mpi
-      # Create an SSH key with empty passphrase
-      ssh-keygen -t rsa -N "" -P "" -C "Passwordless ssh key to move between deployed mpi@machine nodes" -f ~/.ssh/id_rsa
-      # The public key must be added to authorized_keys to enable passwordless ssh
-      cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-      echo "  StrictHostKeyChecking no" >> ~/.ssh/config
-      exit  # exit session as 'mpi' user
+# - create_and_configure_the_user_mpi:
+#   - exec_in: |
+#       # create a dedicated user "mpi" and add it to the "rdma" group to allow access to Infiniband hardware
+#       useradd -m -g users mpi -d /var/mpi
+#       usermod -aG rdma mpi
+#       # Add user "mpi" to group sudo if you want
+#       usermod -aG sudo mpi
+#       # Change the shell for the user "mpi" to bash (in case it is sh)
+#       chsh -s /bin/bash mpi
+#       # Copy the ~root/authorized_keys so that we can login as "mpi" from the frontend
+#       mkdir ~mpi/.ssh
+#       cp ~root/.ssh/authorized_keys ~mpi/.ssh
+#       chown -R mpi ~mpi/.ssh
+#       su - mpi
+#       # Create an SSH key with empty passphrase
+#       ssh-keygen -t rsa -N "" -P "" -C "Passwordless ssh key to move between deployed mpi@machine nodes" -f ~/.ssh/id_rsa
+#       # The public key must be added to authorized_keys to enable passwordless ssh
+#       cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+#       echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+#       exit  # exit session as 'mpi' user
 
 
 - configure_bash_vim_git:
