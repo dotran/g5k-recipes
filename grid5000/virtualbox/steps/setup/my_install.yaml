@@ -10,7 +10,7 @@
 
 - install_additions:
   - exec_in: |
-      apt-get install -y htop git
+      apt-get install -y htop git pigz
       apt-get install -y bash-completion build-essential module-assistant
 
 - install_command_not_found:
@@ -37,7 +37,7 @@
 
 - add_r_backport_to_source_list:
   - exec_in: |
-      echo -e "\n\n\n# Backport of R\n" >> /etc/apt/sources.list
+      echo -e "\n\n# Backport of R" >> /etc/apt/sources.list
       echo "deb https://cloud.r-project.org/bin/linux/$${distrib} $${release}-cran34/" >> /etc/apt/sources.list
       apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF'
       apt-get -y update
