@@ -14,6 +14,12 @@
         EXPORT_OPTS=""
       fi
   - exec_local: |
+      echo "python2 $${export_appliance_script} $${image_disk}.$${image_format}"
+      echo "  -o $${output_filename}"
+      echo "  --formats $${output_formats}"
+      echo "  --tar-compression-level $${tar_compression_level}"
+      echo "  --tar-excludes $${tar_excludes} $EXPORT_OPTS"
+  - exec_local: |
       python2 $${export_appliance_script} $${image_disk}.$${image_format} \
         -o $${output_filename} \
         --formats $${output_formats} \
