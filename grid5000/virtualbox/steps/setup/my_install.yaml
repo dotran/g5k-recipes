@@ -5,7 +5,7 @@
 - python_source_url: "https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tar.xz"
 - r_backport_source: "deb https://cloud.r-project.org/bin/linux/$${distrib} $${release}-cran34/"
 - nvidia_driver_url: "http://us.download.nvidia.com/XFree86/Linux-x86_64/384.59/NVIDIA-Linux-x86_64-384.59.run"
-- cuda_toolkit_file: $${kameleon_data_dir}/my_files/cuda-linux64-rel-*.run
+- cuda_toolkit_file: #$${kameleon_data_dir}/my_files/cuda-linux64-rel-*.run
 
 - update_repositories_and_upgrade:
   - exec_in: |
@@ -121,7 +121,7 @@
       sh /dev/shm/NVIDIA-Linux-x86_64-xxx.xx.run --accept-license --silent --no-install-compat32-libs
       rm /dev/shm/NVIDIA-Linux-*
       # Install the CUDA Toolkit
-      if [ -e $${cuda_toolkit_file} ]; then
+      if [ -z $${cuda_toolkit_file} -a -e $${cuda_toolkit_file} ]; then
         sh $${cuda_toolkit_file} -noprompt
         sed -e "s,:/bin,:/bin:/usr/local/cuda/bin," -i /etc/profile
         echo -e "/usr/local/cuda/lib64" > /etc/ld.so.conf.d/cuda.conf
