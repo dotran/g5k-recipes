@@ -2,38 +2,38 @@
 
 - update_repos_and_upgrades:
   - exec_in: |
-      apt-get -y --force-yes update
-      apt-get -y --force-yes upgrade
-      apt-get -y --force-yes autoclean
-      apt-get -y --force-yes clean
-      apt-get -y --force-yes autoremove
+      apt-get -y update
+      apt-get -y upgrade
+      apt-get -y autoclean
+      apt-get -y clean
+      apt-get -y autoremove
 
 - install_additions:
   - exec_in: |
-      apt install -y htop git
-      apt install -y bash-completion build-essential module-assistant
+      apt-get install -y htop git
+      apt-get install -y bash-completion build-essential module-assistant
 
 - install_command_not_found:
   - exec_in: |
-      apt install -y command-not-found
+      apt-get install -y command-not-found
       update-command-not-found
 
 - install_compilers_openmpi:
   - exec_in: |
-      apt install -y gcc g++ make cmake gfortran
-      apt install -y openmpi-bin openmpi-common libopenmpi-dev
+      apt-get install -y gcc g++ make cmake gfortran
+      apt-get install -y openmpi-bin openmpi-common libopenmpi-dev
 
 - install_python:
   - exec_in: |
-      apt install -y python-pip python3-pip python-virtualenv
-      apt install -y zlib1g-dev libssl-dev libsqlite3-dev libbz2-dev libffi-dev libreadline-dev
+      apt-get install -y python-pip python3-pip python-virtualenv
+      apt-get install -y zlib1g-dev libssl-dev libsqlite3-dev libbz2-dev libffi-dev libreadline-dev
 
 - install_r_helpers:
   - exec_in: |
-      apt install -y apt-transport-https
-      apt install -y dirmngr
-      apt install -y libatlas3-base
-      apt install -y libcurl4-openssl-dev libxml2-dev
+      apt-get install -y apt-transport-https
+      apt-get install -y dirmngr
+      apt-get install -y libatlas3-base
+      apt-get install -y libcurl4-openssl-dev libxml2-dev
 
 - add_r_backport_to_source_list:
   - exec_in: |
@@ -42,10 +42,10 @@
 
 - install_r:
   - exec_in: |
-      apt r-base r-base-dev
+      apt-get install -y r-base r-base-dev
 
 - clean_up:
   - exec_in: |
-      apt-get -y --force-yes autoclean
-      apt-get -y --force-yes clean
-      apt-get -y --force-yes autoremove
+      apt-get -y autoclean
+      apt-get -y clean
+      apt-get -y autoremove
