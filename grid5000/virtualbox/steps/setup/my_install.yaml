@@ -84,7 +84,7 @@
   - exec_in: |
       # create a dedicated user "mpi" and add it to the "rdma" group to allow access to Infiniband hardware
       useradd -m -g users mpi -d /var/mpi
-#      usermod -aG rdma mpi
+      #usermod -aG rdma mpi
       # Add user "mpi" to group sudo if you want
       usermod -aG sudo mpi
       # Change the shell for the user "mpi" to bash (in case it is sh)
