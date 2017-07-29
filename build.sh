@@ -32,26 +32,16 @@ for r in $RECIPES; do
     else
         rm -rf $BUILD_PATH
         cat <<EOF
-================================================================================
+===============================================================================
 === $name
-================================================================================
+===============================================================================
 EOF
         
         (set -x; kameleon build $ROOT_PROJECT/$r --build-path \
                     $BUILD_PATH --script --enable-cache --cache-archive-compression=none --global=appliance_formats:$FORMAT $PROXY)
         
-        if [ $? -eq 0 ]; then
-            mkdir -p $ROOTFS_PATH
-            date=$(date +%Y%m%d%H%M%S)
-            for f in $BUILD_PATH/$name/*.$FORMAT; do
-              mv -v $f $ROOTFS_PATH/$(basename $f .$FORMAT)_$date.$FORMAT
-            done
-        else
+        if [ $? -ne 0 ]; then
             echo -e "\n$name FAILED\n"
         fi
     fi
 done
-
-
-# Push images to kameleon website
-# rsync -avh rootfs/ oar-docmaster.website:~/kameleon-doc/rootfs/x86_64
