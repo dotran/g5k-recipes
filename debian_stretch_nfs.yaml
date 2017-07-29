@@ -15,6 +15,7 @@ global:
   g5k_tgz_path: /home/totran/debian_stretch_nfs.tgz
   g5k_postinst_path: server:///grid5000/postinstalls/debian-x64-nfs-2.6-post.tgz
   appliance_formats: tgz
+  virtualbox_cpus_number: 8
 
 bootstrap:
   - "@base"

@@ -33,13 +33,13 @@
 
 - install_compilers_openmpi:
   - exec_in: |
-      apt-get install -y gcc g++ gfortran make cmake
+      apt-get install -y gcc g++ gfortran make cmake valgrind
       # apt-get install -y openmpi-bin openmpi-common libopenmpi-dev
 
 - download_compile_install_latest_openmpi:
   - exec_in: |
       # Install build dependencies
-      apt install -y g++ make gfortran f2c libblas-dev
+      apt-get install -y g++ make gfortran f2c libblas-dev
       # Download OpenMPI source tarball, compile and install it
       wget -O /dev/shm/OpenMPI.tar.xz  $${openmpi_source_url}
       mkdir /dev/shm/OpenMPISource
@@ -84,7 +84,7 @@
   - exec_in: |
       # create a dedicated user "mpi" and add it to the "rdma" group to allow access to Infiniband hardware
       useradd -m -g users mpi -d /var/mpi
-      usermod -aG rdma mpi
+      # usermod -aG rdma mpi
       # Add user "mpi" to group sudo if you want
       usermod -aG sudo mpi
       # Change the shell for the user "mpi" to bash (in case it is sh)
