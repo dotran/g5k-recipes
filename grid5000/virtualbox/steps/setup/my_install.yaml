@@ -36,16 +36,16 @@
       apt-get install -y gcc g++ gfortran make cmake valgrind
       # apt-get install -y openmpi-bin openmpi-common libopenmpi-dev
 
-- download_compile_install_latest_openmpi:
-  - exec_in: |
-      # Install build dependencies
-      apt-get install -y g++ make gfortran f2c libblas-dev
-      # Download OpenMPI source tarball, compile and install it
-      wget -O /dev/shm/OpenMPI.tar.xz  $${openmpi_source_url}
-      mkdir /dev/shm/OpenMPISource
-      tar -xf /dev/shm/OpenMPI.tar.xz -C /dev/shm/OpenMPISource/ --strip-components 1  # extract content to a specified folder
-      (cd /dev/shm/OpenMPISource/ && ./configure --libdir=/usr/local/lib64 --with-memory-manager=none && make -j8 && make install)
-      rm -rf /dev/shm/OpenMPI*
+# - download_compile_install_latest_openmpi:
+#   - exec_in: |
+#       # Install build dependencies
+#       apt-get install -y g++ make gfortran f2c libblas-dev
+#       # Download OpenMPI source tarball, compile and install it
+#       wget -O /dev/shm/OpenMPI.tar.xz  $${openmpi_source_url}
+#       mkdir /dev/shm/OpenMPISource
+#       tar -xf /dev/shm/OpenMPI.tar.xz -C /dev/shm/OpenMPISource/ --strip-components 1  # extract content to a specified folder
+#       (cd /dev/shm/OpenMPISource/ && ./configure --libdir=/usr/local/lib64 --with-memory-manager=none && make -j8 && make install)
+#       rm -rf /dev/shm/OpenMPI*
 
 - install_python:
   - exec_in: |
@@ -84,7 +84,7 @@
   - exec_in: |
       # create a dedicated user "mpi" and add it to the "rdma" group to allow access to Infiniband hardware
       useradd -m -g users mpi -d /var/mpi
-      # usermod -aG rdma mpi
+#      usermod -aG rdma mpi
       # Add user "mpi" to group sudo if you want
       usermod -aG sudo mpi
       # Change the shell for the user "mpi" to bash (in case it is sh)
