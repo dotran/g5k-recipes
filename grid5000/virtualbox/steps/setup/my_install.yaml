@@ -1,5 +1,12 @@
 # Install my custom set of utilities
 
+- my_files_path: $${kameleon_data_dir}/my_files
+- openmpi_source_url: "https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.1.tar.bz2"
+- python_source_url: "https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tar.xz"
+- r_backport_source: "deb https://cloud.r-project.org/bin/linux/$${distrib} $${release}-cran34/"
+- nvidia_driver_url: "http://us.download.nvidia.com/XFree86/Linux-x86_64/384.59/NVIDIA-Linux-x86_64-384.59.run"
+- cuda_toolkit_file: $${kameleon_data_dir}/my_files/cuda-linux64-rel-*.run
+
 - update_repositories_and_upgrade:
   - exec_in: |
       apt-get -y update
@@ -10,23 +17,49 @@
 
 - install_additions:
   - exec_in: |
-      apt-get install -y htop git pigz
-      apt-get install -y bash-completion build-essential module-assistant
+      apt-get install -y htop git bash-completion sudo man-db
+      apt-get install -y build-essential module-assistant
 
 - install_command_not_found:
   - exec_in: |
       apt-get install -y command-not-found
       update-command-not-found
 
+- install_parallel_gzip:
+  - exec_in: |
+      apt-get install -y pigz
+      mv /bin/gzip /bin/gzip.OLD     # backup 'gzip'
+      ln -s /usr/bin/pigz /bin/gzip  # use the parallel version 'pigz'
+
 - install_compilers_openmpi:
   - exec_in: |
-      apt-get install -y gcc g++ make cmake gfortran
-      apt-get install -y openmpi-bin openmpi-common libopenmpi-dev
+      apt-get install -y gcc g++ gfortran make cmake
+      # apt-get install -y openmpi-bin openmpi-common libopenmpi-dev
+
+- download_compile_install_latest_openmpi:
+  - exec_in: |
+      # Install build dependencies
+      apt install -y g++ make gfortran f2c libblas-dev
+      # Download OpenMPI source tarball, compile and install it
+      wget -O /dev/shm/OpenMPI.tar.xz  $${openmpi_source_url}
+      mkdir /dev/shm/OpenMPISource
+      tar -xf /dev/shm/OpenMPI.tar.xz -C /dev/shm/OpenMPISource/ --strip-components 1  # extract content to a specified folder
+      (cd /dev/shm/OpenMPISource/ && ./configure --libdir=/usr/local/lib64 --with-memory-manager=none && make -j8 && make install)
+      rm -rf /dev/shm/OpenMPI*
 
 - install_python:
   - exec_in: |
       apt-get install -y python-pip python3-pip python-virtualenv
       apt-get install -y zlib1g-dev libssl-dev libsqlite3-dev libbz2-dev libffi-dev libreadline-dev
+
+- download_compile_install_latest_python:
+  - exec_in: |
+      # Download Python source tarball, compile and install it
+      wget -O /dev/shm/Python.tar.xz  $${python_source_url}
+      mkdir /dev/shm/PythonSource
+      tar -xf /dev/shm/Python.tar.xz -C /dev/shm/PythonSource/ --strip-components 1  # extract content to a specified folder
+      (cd /dev/shm/PythonSource/ && ./configure && make -j8 && make altinstall)
+      rm -rf /dev/shm/Python*
 
 - install_r_helpers:
   - exec_in: |
@@ -38,13 +71,63 @@
 - add_r_backport_to_source_list:
   - exec_in: |
       echo -e "\n\n# Backport of R" >> /etc/apt/sources.list
-      echo "deb https://cloud.r-project.org/bin/linux/$${distrib} $${release}-cran34/" >> /etc/apt/sources.list
+      echo $${r_backport_source} >> /etc/apt/sources.list
       apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF'
       apt-get -y update
 
 - install_r:
   - exec_in: |
       apt-get install -y r-base r-base-dev
+
+
+- create_and_configure_the_user_mpi:
+  - exec_in: |
+      # create a dedicated user "mpi" and add it to the "rdma" group to allow access to Infiniband hardware
+      useradd -m -g users mpi -d /var/mpi
+      usermod -aG rdma mpi
+      # Add user "mpi" to group sudo if you want
+      usermod -aG sudo mpi
+      # Change the shell for the user "mpi" to bash (in case it is sh)
+      chsh -s /bin/bash mpi
+      # Copy the ~root/authorized_keys so that we can login as "mpi" from the frontend
+      mkdir ~mpi/.ssh
+      cp ~root/.ssh/authorized_keys ~mpi/.ssh
+      chown -R mpi ~mpi/.ssh
+      su - mpi
+      # Create an SSH key with empty passphrase
+      ssh-keygen -t rsa -N "" -P "" -C "Passwordless ssh key to move between deployed mpi@machine nodes" -f ~/.ssh/id_rsa
+      # The public key must be added to authorized_keys to enable passwordless ssh
+      cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+      echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+      exit  # exit session as 'mpi' user
+
+
+- configure_bash_vim_git:
+  - exec_in: |
+      cp $${my_files_path}/.bash_aliases      ~root/
+      cp $${my_files_path}/.gitconfig         ~root/
+      cp $${my_files_path}/.vimrc             ~root/
+      echo -e "\n====================\n"  >>  ~root/.bashrc
+      cat $${my_files_path}/.bashrc       >>  ~root/.bashrc
+
+
+- install_nvidia_cuda:
+  - exec_in: |
+      # Install the kernel header files and gcc (also g++ and make to compile CUDA samples)
+      apt-get install -y gcc g++ make linux-headers-amd64
+      # Download the latest NVIDIA Driver from the official site
+      wget -O /dev/shm/NVIDIA-Linux-x86_64-xxx.xx.run  $${nvidia_driver_url}
+      # Install the NVIDIA Driver
+      sh /dev/shm/NVIDIA-Linux-x86_64-xxx.xx.run --accept-license --silent --no-install-compat32-libs
+      rm /dev/shm/NVIDIA-Linux-*
+      # Install the CUDA Toolkit
+      if [ -e $${cuda_toolkit_file} ]; then
+        sh $${cuda_toolkit_file} -noprompt
+        sed -e "s,:/bin,:/bin:/usr/local/cuda/bin," -i /etc/profile
+        echo -e "/usr/local/cuda/lib64" > /etc/ld.so.conf.d/cuda.conf
+        ldconfig
+      fi
+
 
 - clean_up:
   - exec_in: |

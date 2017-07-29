@@ -1,0 +1,31 @@
+[user]
+    name = Do Tran
+    email = trantdo@gmail.com
+[core]
+    editor = vim
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    up = rebase
+    lg        = log --all --graph --decorate --oneline
+    lgshort   = log --all --graph --decorate --oneline --simplify-by-decoration
+    lg2       = log --all --graph --decorate --full-history --date=short --pretty=format:'%C(auto)%h%Creset %Cgreen%ad%Creset %s%C(auto)%d%Creset'
+    lg2author = log --all --graph --decorate --full-history --date=short --pretty=format:'%C(auto)%h%Creset %Cgreen%ad%Creset %s%C(auto)%d%Creset %C(bold blue)[%an]%Creset'
+    #conflicts = ls-files --unmerged | cut -f2 | uniq
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    required = true
+[push]
+    default = simple
+[merge]
+    tool = tortoisemerge
+    #tool = meld
+    #conflictstyle = diff3
+[mergetool "tortoisemerge"]
+    path = C:\\Program Files\\TortoiseGit\\bin\\TortoiseGitMerge.exe
+    #path = D:\\Program Files (x86)\\Meld\\Meld.exe
+    #cmd = --auto-merge --output $MERGED $LOCAL $BASE $REMOTE --diff $LOCAL $MERGED $REMOTE --diff $BASE $LOCAL --diff $BASE $REMOTE 2> /dev/null
+    #cmd = meld --diff $LOCAL $MERGED $REMOTE --diff $BASE $LOCAL --diff $BASE $REMOTE
