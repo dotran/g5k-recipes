@@ -20,6 +20,7 @@ bootstrap:
 
 setup:
   - "@base"
+  - my_install
   # - clean_unnecessary_packages
 
 export:

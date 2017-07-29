@@ -1,0 +1,29 @@
+# Install my custom set of utilities
+
+- install_additions:
+  - exec_in: |
+      apt update
+      apt install -y htop git
+      apt install -y bash-completion build-essential module-assistant
+
+- install_command_not_found:
+  - exec_in: |
+      apt install -y command-not-found
+      update-command-not-found
+
+- install_compilers_openmpi:
+  - exec_in: |
+      apt install -y gcc g++ make cmake gfortran
+      apt install -y openmpi-bin openmpi-common libopenmpi-dev
+
+- install_python:
+  - exec_in: |
+      apt install -y python-pip python3-pip python-virtualenv
+      apt install -y zlib1g-dev libssl-dev libsqlite3-dev libbz2-dev libffi-dev libreadline-dev
+
+- install_r_helpers:
+  - exec_in: |
+      apt install -y apt-transport-https
+      apt install -y dirmngr
+      apt install -y libatlas3-base
+      apt install -y libcurl4-openssl-dev libxml2-dev
